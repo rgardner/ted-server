@@ -2,14 +2,16 @@ require 'sinatra'
 require 'twilio-ruby'
 
 get '/sms-quickstart' do
-  sender = params[:From]
-  friends = {
-    '+14256149938' => 'Bob',
-    '+19088948764' => 'Nicole'
-  }
-  name = friends[sender] || 'Mobile Monkey'
-  twiml = Twilio::TwiML::Response.new do |r|
-    r.Message "Hello, #{name}. Thanks for the message."
+  session['counter'] ||= 0
+  sms_count = session['counter']
+  if sms_count == 0
+    message = 'Hello, thanks for the new message.'
+  else
+    message = "hello, thanks for message number #{sms_count + 1}"
   end
+  twiml = Twilio::TwiML::Response.new do |r|
+    r.Sms message
+  end
+  session['counter'] += 1
   twiml.text
 end
