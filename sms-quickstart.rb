@@ -1,5 +1,8 @@
+require 'rubygems'
 require 'sinatra'
 require 'twilio-ruby'
+
+enable :sessions
 
 get '/sms-quickstart' do
   session['counter'] ||= 0
@@ -9,9 +12,8 @@ get '/sms-quickstart' do
   else
     message = "hello, thanks for message number #{sms_count + 1}"
   end
-  twiml = Twilio::TwiML::Response.new do |r|
+  Twilio::TwiML::Response.new do |r|
     r.Sms message
-  end
+  end.text
   session['counter'] += 1
-  twiml.text
 end
